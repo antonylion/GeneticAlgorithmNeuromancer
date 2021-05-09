@@ -1,5 +1,8 @@
 import java.util.Random;
 import java.util.StringTokenizer;
+import java.io.File;  // Import the File class
+import java.io.FileNotFoundException;  // Import this class to handle errors
+import java.util.Scanner; // Import the Scanner class to read text files
 
 public class Individual{
     int fitness = 0;
@@ -8,21 +11,13 @@ public class Individual{
     StringTokenizer st;
 
     //Weights indexes
-    //static double weightVictory = 5000;
     final static int WEIGHT_VICTORY = 0;
-    //static double weightKingPosition = 200;
     final static int KING_POSITION = 1;
-    //static double weightDistanceFromCentre = 250;
     final static int DISTANCE_CENTRE = 2;
-    //static double weightNumberOfWhites = 170;
     final static int NUMBER_WHITES = 3;
-    //static double weightSurroundingBlackPawn = -100;
     final static int SURROUNDING_BLACKS = 4;
-    //static double weightNumberOfBlacks = -170;
     final static int NUMBER_BLACKS = 5;
-    //static double weightThreat = -190;
     final static int THREAT = 6;
-    //static double weightScatter = 100;
     final static int SCATTER = 7;
     final static int NEAR_KING = 8;
 
@@ -46,20 +41,19 @@ public class Individual{
 
     //Calculate fitness
     public void calcFitness() {
-
+        String matchResult = "";
+        String data = "";
         fitness = 0;
         try {
             File myObj = new File("/Users/antonyzappacosta/Desktop/filesForGenetic/NeuroAppOutput.txt");
             Scanner myReader = new Scanner(myObj);
-            String data;
-            st = new StringTokenizer(data, ";");
-            String matchResult;
             while (myReader.hasNextLine()) {
                 data = myReader.nextLine();
+                st = new StringTokenizer(data, ";");
                 System.out.println("LETTA RIGA: " + data);
                 System.out.println(data);
+                //LEGGO SE HO VINTO O PERSO
                 matchResult = st.nextToken().trim();
-
                 break;
             }
             myReader.close();
@@ -67,8 +61,10 @@ public class Individual{
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-        //TODO: define how to calculate our fitness
-        if(matchResult == "WIN"){
+
+        System.out.println("RISULTATO PARTITA: " + matchResult);
+
+        if(matchResult.equals("WIN")){
             fitness = 1;
         }
     }

@@ -1,8 +1,12 @@
 import java.util.Random;
+import java.util.StringTokenizer;
+import java.io.File;  // Import the File class
+import java.io.FileNotFoundException;  // Import this class to handle errors
+import java.util.Scanner; // Import the Scanner class to read text files
 public class MainGeneticAlgorithm{
 
     //TODO: understand what is our fitness goal; could be win at least 8 games on 10 versus FrittoMisto_Agent
-    static final fitnessGoal = 1;
+    static final int fitnessGoal = 1;
 
     Population population = new Population();
     Individual fittest;
@@ -44,6 +48,7 @@ public class MainGeneticAlgorithm{
             demo.population.calculateFitness();
 
             System.out.println("Generation: " + demo.generationCount + " Fittest: " + demo.population.fittest);
+            break;
         }
 
         System.out.println("\nSolution found in generation " + demo.generationCount);
@@ -82,6 +87,13 @@ public class MainGeneticAlgorithm{
 
         }
 
+    }
+
+    Individual getFittestOffspring() {
+        if (fittest.fitness > secondFittest.fitness) {
+            return fittest;
+        }
+        return secondFittest;
     }
 
     //Replace least fittest individual from most fittest offspring
