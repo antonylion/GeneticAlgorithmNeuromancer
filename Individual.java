@@ -3,12 +3,17 @@ import java.util.StringTokenizer;
 import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // Import this class to handle errors
 import java.util.Scanner; // Import the Scanner class to read text files
+import java.io.FileWriter;   // Import the FileWriter class
+import java.io.IOException;  // Import the IOException class to handle errors
 
 public class Individual{
     int fitness = 0;
     int[] genes = new int[9];
     int geneLength = 9;
     StringTokenizer st;
+    FileWriter myWriter;
+    Random rn;
+
 
     //Weights indexes
     final static int WEIGHT_VICTORY = 0;
@@ -22,7 +27,7 @@ public class Individual{
     final static int NEAR_KING = 8;
 
     public Individual(){
-        Random rn = new Random();
+        rn = new Random();
 
         //Set genes randomly for each individual, considering a reasoned range for everyone of it
         for (int i = 0; i < genes.length; i++) {
@@ -37,6 +42,17 @@ public class Individual{
             genes[NEAR_KING] = rn.nextInt(99) + 1;
         }
         fitness = 0;
+        try {
+            myWriter = new FileWriter("/Users/antonyzappacosta/Desktop/filesForGenetic/evolution.txt");
+            for(double peso : genes){
+                myWriter.write(peso + ";");
+            }
+            myWriter.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
     }
 
     //Calculate fitness
@@ -51,7 +67,6 @@ public class Individual{
                 data = myReader.nextLine();
                 st = new StringTokenizer(data, ";");
                 System.out.println("LETTA RIGA: " + data);
-                System.out.println(data);
                 //LEGGO SE HO VINTO O PERSO
                 matchResult = st.nextToken().trim();
                 break;
@@ -66,6 +81,31 @@ public class Individual{
 
         if(matchResult.equals("WIN")){
             fitness = 1;
+        }
+    }
+
+    public void retry(){
+        //dummy trial of another random individual
+        for (int i = 0; i < genes.length; i++) {
+            genes[WEIGHT_VICTORY] = rn.nextInt(1000) + 4500;
+            genes[KING_POSITION] = rn.nextInt(150) + 50;
+            genes[DISTANCE_CENTRE] = 0;
+            genes[NUMBER_WHITES] = rn.nextInt(200) + 100;
+            genes[SURROUNDING_BLACKS] = (rn.nextInt(199) + 50) * (-1);
+            genes[NUMBER_BLACKS] = (rn.nextInt(200) + 100) * (-1);
+            genes[THREAT] = (rn.nextInt(200) + 100) * (-1);
+            genes[SCATTER] = rn.nextInt(150) + 50;
+            genes[NEAR_KING] = rn.nextInt(99) + 1;
+        }
+        try {
+            myWriter = new FileWriter("/Users/antonyzappacosta/Desktop/filesForGenetic/evolution.txt");
+            for(double peso : genes){
+                myWriter.write(peso + ";");
+            }
+            myWriter.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
         }
     }
 

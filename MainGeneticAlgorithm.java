@@ -3,6 +3,8 @@ import java.util.StringTokenizer;
 import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // Import this class to handle errors
 import java.util.Scanner; // Import the Scanner class to read text files
+import java.lang.Thread;
+import java.lang.InterruptedException;
 public class MainGeneticAlgorithm{
 
     //TODO: understand what is our fitness goal; could be win at least 8 games on 10 versus FrittoMisto_Agent
@@ -20,7 +22,7 @@ public class MainGeneticAlgorithm{
         MainGeneticAlgorithm demo = new MainGeneticAlgorithm();
 
         //Initialize population
-        demo.population.initializePopulation(10);
+        demo.population.initializePopulation(1);
 
         //Calculate fitness of each individual
         demo.population.calculateFitness();
@@ -31,6 +33,7 @@ public class MainGeneticAlgorithm{
         while (demo.population.fittest < fitnessGoal) {
             ++demo.generationCount;
 
+            /* CORRECT AND COMPLETE WAY TO GENERATE AN EVOLVED INDIVIDUAL
             //Do selection
             demo.selection();
 
@@ -43,12 +46,22 @@ public class MainGeneticAlgorithm{
 
             //Add fittest offspring to population
             demo.addFittestOffspring();
+            */
+
+            //DUMMY WAY TO TRY ONE INDIVIDUAL AT TIME, RANDOMLY (WITH NO EVOLUTION)
+            demo.population.inidividualRetry();
 
             //Calculate new fitness value
             demo.population.calculateFitness();
 
             System.out.println("Generation: " + demo.generationCount + " Fittest: " + demo.population.fittest);
-            break;
+            try{
+                Thread.sleep(2000);
+            }
+            catch(InterruptedException e){
+                System.out.println("Interrupted Exception");
+                System.exit(0);
+            }
         }
 
         System.out.println("\nSolution found in generation " + demo.generationCount);

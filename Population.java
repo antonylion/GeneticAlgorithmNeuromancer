@@ -4,8 +4,11 @@ import java.io.FileNotFoundException;  // Import this class to handle errors
 import java.util.Scanner; // Import the Scanner class to read text files
 public class Population {
 
-    int popSize = 10;
-    Individual[] individuals = new Individual[10];
+    int N_INDIVIDUALS = 1;
+
+    int popSize = 1;
+    Individual[] individuals = new Individual[N_INDIVIDUALS];
+    //FOR SEMPLICITY, LET THE POPULATION BE COMPOSED BY ONE INDIVIDUAL
     int fittest = 0;
 
     //Initialize population
@@ -64,6 +67,10 @@ public class Population {
             individuals[i].calcFitness();
         }
         getFittest();
+    }
+
+    public void inidividualRetry(){
+        individuals[0].retry();
     }
 
 }
