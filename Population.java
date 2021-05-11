@@ -12,9 +12,15 @@ public class Population {
     int fittest = 0;
 
     //Initialize population
-    public void initializePopulation(int size) {
-        for (int i = 0; i < individuals.length; i++) {
-            individuals[i] = new Individual();
+    public void initializePopulation(int size, String player) {
+        if(player.equals("WHITE")){
+            for (int i = 0; i < individuals.length; i++) {
+                individuals[i] = new WhiteIndividual();
+            }
+        } else{ //PLAYER BLACK
+            for (int i = 0; i < individuals.length; i++) {
+                individuals[i] = new BlackIndividual();
+            }
         }
     }
 
@@ -33,6 +39,7 @@ public class Population {
     }
 
     //Get the second most fittest individual
+    /*
     public Individual getSecondFittest() {
         int maxFit1 = 0;
         int maxFit2 = 0;
@@ -45,9 +52,10 @@ public class Population {
             }
         }
         return individuals[maxFit2];
-    }
+    }*/
 
     //Get index of least fittest individual
+    /*
     public int getLeastFittestIndex() {
         int minFitVal = Integer.MAX_VALUE;
         int minFitIndex = 0;
@@ -58,7 +66,7 @@ public class Population {
             }
         }
         return minFitIndex;
-    }
+    }*/
 
     //Calculate fitness of each individual
     public void calculateFitness() {
@@ -69,8 +77,17 @@ public class Population {
         getFittest();
     }
 
-    public void inidividualRetry(){
+    /*public void inidividualRetry(){
         individuals[0].retry();
+    }*/
+
+    public void retryWithFirstStrategy(){
+        individuals[0].retryFirtStrategy();
     }
+
+    /*
+    public void retryWithSecondStrategy(){
+        individuals[0].retrySecondStrategy();
+    }*/
 
 }
