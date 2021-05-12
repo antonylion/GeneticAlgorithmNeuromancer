@@ -9,7 +9,7 @@ public class MainGeneticAlgorithm{
 
     //TODO: understand what is our fitness goal; could be win at least 8 games on 10 versus FrittoMisto_Agent
     static int fitnessGoal = 1;
-    static final String outputFilePath = "/tmp/NeuroWeights.txt";
+    static String outputFilePath = "/tmp/NeuroWeights.txt";
 
     Population population = new Population();
     static Individual fittest;
@@ -36,7 +36,7 @@ public class MainGeneticAlgorithm{
         MainGeneticAlgorithm demo = new MainGeneticAlgorithm();
 
         //Initialize population
-        demo.population.initializePopulation(1, player, outputFilePath);
+        demo.population.initializePopulation(1, player, outputFilePath, Integer.parseInt(id));
 
         //Calculate fitness of each individual
         demo.population.calculateFitness();

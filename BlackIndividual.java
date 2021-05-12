@@ -22,8 +22,8 @@ public class BlackIndividual extends Individual{
     final static int NUMBER_GENERATION_PER_INDEX = 15;
     static int numberOfGeneration = NUMBER_GENERATION_PER_INDEX;
 
-    public BlackIndividual(String outputFilePath){
-        super(outputFilePath);
+    public BlackIndividual(String outputFilePath, int id){
+        super(outputFilePath, id);
         rn = new Random();
         genes[WEIGHT_VICTORY] = initialGenes[WEIGHT_VICTORY];
         genes[WEIGHT_RHOMBUS] = initialGenes[WEIGHT_RHOMBUS];
@@ -36,7 +36,7 @@ public class BlackIndividual extends Individual{
 
         fitness = 0;
         try {
-            var myWriter = new FileWriter(outputFilePath);
+            var myWriter = new FileWriter(outputFilePath + id);
             for(double peso : genes){
                 myWriter.write(peso + ";");
             }
@@ -48,7 +48,7 @@ public class BlackIndividual extends Individual{
         }
 
         try {
-            var myWriter = new FileWriter(historyFilePath);
+            var myWriter = new FileWriter(historyFilePath + id);
             for(double peso : genes){
                 myWriter.write(peso + ";");
             }
@@ -105,7 +105,7 @@ public class BlackIndividual extends Individual{
         numberOfGeneration++;
 
         try { //write to evolution.txt for NeuroApp input
-            var myWriter = new FileWriter(outputFilePath);
+            var myWriter = new FileWriter(outputFilePath + id);
             for(double peso : genes){
                 myWriter.write(peso + ";");
             }
@@ -116,7 +116,7 @@ public class BlackIndividual extends Individual{
         }
 
         try { //write (IN APPEND) to History.txt for unique generations
-            var myWriter = new FileWriter(historyFilePath, true);
+            var myWriter = new FileWriter(historyFilePath + id, true);
             for(double peso : genes){
                 myWriter.write(peso + ";");
             }

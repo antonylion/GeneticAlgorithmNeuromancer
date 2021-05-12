@@ -16,16 +16,18 @@ public abstract class Individual{
     protected final String historyFilePath = "/tmp/NeuroGeneticHistory.txt";
     protected final String gameOutputFilePath = "/tmp/NeuroClientOutput.txt";
     protected String outputFilePath;
+    protected int id;
 
-    public Individual(String outputFilePath){
+    public Individual(String outputFilePath, int id){
         this.outputFilePath = outputFilePath;
+        this.id = id;
     }
     public boolean isUnique(double[] genes){
         //System.out.println("ENTRO isUnique");
         int weightIndex = 0;
         double currentReadWeight;
         String data = "";
-        try (var br = new BufferedReader(new FileReader(historyFilePath))) {
+        try (var br = new BufferedReader(new FileReader(historyFilePath + id))) {
             while ((data = br.readLine()) != null) {
                 weightIndex = 0;
                 var st = new StringTokenizer(data, ";");
@@ -50,7 +52,7 @@ public abstract class Individual{
         String data = "";
         fitness = 0;
 
-        try (var br = new BufferedReader(new FileReader(gameOutputFilePath))) {
+        try (var br = new BufferedReader(new FileReader(gameOutputFilePath + id))) {
             while ((data = br.readLine()) != null) {
                 var st = new StringTokenizer(data, ";");
                 System.out.println("LETTA RIGA: " + data);
