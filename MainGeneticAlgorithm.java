@@ -7,15 +7,28 @@ import java.lang.Thread;
 import java.lang.InterruptedException;
 public class MainGeneticAlgorithm{
 
-    static int fitnessGoal = 1;
+    //TODO: understand what is our fitness goal; could be win at least 8 games on 10 versus FrittoMisto_Agent
+    static final int fitnessGoal = 1;
 
     Population population = new Population();
-    static Individual fittest;
+    Individual fittest;
+    Individual secondFittest;
     int generationCount = 0;
 
     public static void main(String[] args) {
 
-        String player = args[0];
+        if (args.length < 1) {
+            System.err.println("Usage: java MainGeneticAlgorithm ID player");
+            System.exit(1);
+        }
+
+        String geneticStartFileName = "/tmp/genetic_start";
+        String gameStartFileName = "/tmp/game_start";
+
+        String id = args[0];
+        geneticStartFileName += id;
+        gameStartFileName += id;
+	String player = args[1];
 
         Random rn = new Random();
 
@@ -30,9 +43,24 @@ public class MainGeneticAlgorithm{
         System.out.println("Generation: " + demo.generationCount + " Fittest: " + demo.population.fittest);
         fittest = demo.population.getFittest();
         fitnessGoal = demo.population.fittest + 1;
-
+	File gameStartFile = new File(gameStartFileName);
+        File geneticStartFile = new File(geneticStartFileName);
+        
         //While population gets an individual with maximum fitness
         while (demo.population.fittest < fitnessGoal) {
+            System.out.println("Waiting for " + geneticStartFileName);
+            // Wait for geneticStartFile to be created by GameTablut
+            while (!geneticStartFile.exists()) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            }
+            // Delete geneticStartFile; it will be recreated by GameTablut
+            geneticStartFile.delete();
+            System.out.println("Deleted geneticStartFile " + geneticStartFileName);
             ++demo.generationCount;
 
             //DUMMY WAY TO TRY ONE INDIVIDUAL AT TIME, RANDOMLY (WITH NO EVOLUTION)
@@ -45,12 +73,15 @@ public class MainGeneticAlgorithm{
             demo.population.calculateFitness();
 
             System.out.println("Generation: " + demo.generationCount + " Fittest: " + demo.population.fittest);
-            try{
-                Thread.sleep(2000);
-            }
-            catch(InterruptedException e){
-                System.out.println("Interrupted Exception");
-                System.exit(0);
+            // Let GameTablut run
+            try {
+                if (!gameStartFile.createNewFile()) {
+                    System.err.println(gameStartFileName + " already exists. Timing violation. Exiting...");
+                    throw new IOException();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
             }
         }
 
@@ -64,4 +95,8 @@ public class MainGeneticAlgorithm{
         System.out.println("");
 
     }
+
+ 
+
+
 }
