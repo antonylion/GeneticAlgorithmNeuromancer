@@ -1,23 +1,24 @@
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.io.File;  // Import the File class
-import java.io.FileNotFoundException;  // Import this class to handle errors
+import java.io.IOException;
 import java.util.Scanner; // Import the Scanner class to read text files
 import java.lang.Thread;
 import java.lang.InterruptedException;
 public class MainGeneticAlgorithm{
 
     //TODO: understand what is our fitness goal; could be win at least 8 games on 10 versus FrittoMisto_Agent
-    static final int fitnessGoal = 1;
+    static int fitnessGoal = 1;
+    static final String outputFilePath = "/tmp/NeuroWeights.txt";
 
     Population population = new Population();
-    Individual fittest;
-    Individual secondFittest;
+    static Individual fittest;
+    static Individual secondFittest;
     int generationCount = 0;
 
     public static void main(String[] args) {
 
-        if (args.length < 1) {
+        if (args.length < 2) {
             System.err.println("Usage: java MainGeneticAlgorithm ID player");
             System.exit(1);
         }
@@ -28,14 +29,14 @@ public class MainGeneticAlgorithm{
         String id = args[0];
         geneticStartFileName += id;
         gameStartFileName += id;
-	String player = args[1];
+        String player = args[1];
 
         Random rn = new Random();
 
         MainGeneticAlgorithm demo = new MainGeneticAlgorithm();
 
         //Initialize population
-        demo.population.initializePopulation(1, player);
+        demo.population.initializePopulation(1, player, outputFilePath);
 
         //Calculate fitness of each individual
         demo.population.calculateFitness();
@@ -43,9 +44,9 @@ public class MainGeneticAlgorithm{
         System.out.println("Generation: " + demo.generationCount + " Fittest: " + demo.population.fittest);
         fittest = demo.population.getFittest();
         fitnessGoal = demo.population.fittest + 1;
-	File gameStartFile = new File(gameStartFileName);
+        File gameStartFile = new File(gameStartFileName);
         File geneticStartFile = new File(geneticStartFileName);
-        
+
         //While population gets an individual with maximum fitness
         while (demo.population.fittest < fitnessGoal) {
             System.out.println("Waiting for " + geneticStartFileName);
@@ -96,7 +97,7 @@ public class MainGeneticAlgorithm{
 
     }
 
- 
+
 
 
 }

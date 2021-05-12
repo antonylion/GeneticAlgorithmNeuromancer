@@ -8,14 +8,8 @@ import java.io.IOException;  // Import the IOException class to handle errors
 
 public class WhiteIndividual extends Individual{
     //int fitness = 0;
-    static int numeroMosseIniziali = 10000;
-    int numeroMosseAttuali = 10000;
-    static boolean firstComputation = true;
     //double[] genes = new double[8];
     double[] initialGenes = {5000, 100, 200, -100, -170, -100, 50, -50};
-    StringTokenizer st;
-    FileWriter myWriter;
-    Random rn;
 
     //Weights indexes
     final static int WEIGHT_VICTORY = 0;
@@ -32,12 +26,14 @@ public class WhiteIndividual extends Individual{
     final static int NUMBER_GENERATION_PER_INDEX = 15;
     static int numberOfGeneration = NUMBER_GENERATION_PER_INDEX;
 
+
     //parameters for parallel computing
     /*
         static int numberOfGeneration = NUMBER_GENERATION_PER_INDEX;
      */
 
-    public WhiteIndividual(){
+    public WhiteIndividual(String outputFilePath){
+        super(outputFilePath);
         rn = new Random();
         genes[WEIGHT_VICTORY] = initialGenes[WEIGHT_VICTORY];
         genes[KING_POSITION] = initialGenes[KING_POSITION];
@@ -50,7 +46,8 @@ public class WhiteIndividual extends Individual{
 
         fitness = 0;
         try {
-            myWriter = new FileWriter("/Users/antonyzappacosta/Desktop/filesForGenetic/evolution.txt");
+
+            var myWriter = new FileWriter(outputFilePath);
             for(double peso : genes){
                 myWriter.write(peso + ";");
             }
@@ -58,10 +55,11 @@ public class WhiteIndividual extends Individual{
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
+            System.exit(1);
         }
 
         try {
-            myWriter = new FileWriter("/Users/antonyzappacosta/Desktop/filesForGenetic/History.txt");
+            var myWriter = new FileWriter(historyFilePath);
             for(double peso : genes){
                 myWriter.write(peso + ";");
             }
@@ -70,56 +68,11 @@ public class WhiteIndividual extends Individual{
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
+            System.exit(1);
         }
 
     }
 
-    //Calculate fitness
-    public void calcFitness() {
-        String matchResult = "";
-        String data = "";
-        fitness = 0;
-
-        try {
-            File myObj = new File("/Users/antonyzappacosta/Desktop/filesForGenetic/NeuroAppOutput.txt");
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                data = myReader.nextLine();
-                st = new StringTokenizer(data, ";");
-                System.out.println("LETTA RIGA: " + data);
-                //LEGGO SE HO VINTO O PERSO
-                matchResult = st.nextToken().trim();
-                //LEGGO IL NUMERO DI MOSSE DELLA PARTITA
-                numeroMosseAttuali = Integer.parseInt(st.nextToken().trim());
-                break;
-            }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-
-        System.out.println("RISULTATO PARTITA: " + matchResult);
-
-
-        if(matchResult.equals("WIN")){
-            fitness = 2;
-        }
-
-        if(firstComputation){
-            numeroMosseIniziali = numeroMosseAttuali;
-        }
-
-        if(matchResult.equals("WIN") && !firstComputation && numeroMosseAttuali < numeroMosseIniziali){
-            fitness = 3;
-        }
-
-        if(matchResult.equals("LOSE") && !firstComputation && numeroMosseAttuali > numeroMosseIniziali){
-            fitness = 1;
-        }
-
-        firstComputation = false;
-    }
 
     public void changeOneWeight(){
 
@@ -165,7 +118,7 @@ public class WhiteIndividual extends Individual{
         numberOfGeneration++;
 
         try { //write to evolution.txt for NeuroApp input
-            myWriter = new FileWriter("/Users/antonyzappacosta/Desktop/filesForGenetic/evolution.txt");
+            var myWriter = new FileWriter(outputFilePath);
             for(double peso : genes){
                 myWriter.write(peso + ";");
             }
@@ -176,7 +129,7 @@ public class WhiteIndividual extends Individual{
         }
 
         try { //write (IN APPEND) to History.txt for unique generations
-            myWriter = new FileWriter("/Users/antonyzappacosta/Desktop/filesForGenetic/History.txt", true);
+            var myWriter = new FileWriter(historyFilePath, true);
             for(double peso : genes){
                 myWriter.write(peso + ";");
             }
@@ -192,32 +145,5 @@ public class WhiteIndividual extends Individual{
 
     }
 
-    public boolean isUnique(double[] genes){
-        //System.out.println("ENTRO isUnique");
-        int weightIndex = 0;
-        double currentReadWeight;
-        String data = "";
-        try {
-            File myObj = new File("/Users/antonyzappacosta/Desktop/filesForGenetic/History.txt");
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                weightIndex = 0;
-                data = myReader.nextLine();
-                st = new StringTokenizer(data, ";");
-                while (st.hasMoreTokens()){
-                    currentReadWeight = Double.parseDouble(st.nextToken().trim());
-                    if(currentReadWeight != genes[weightIndex]){
-                        return true;
-                    }
-                    weightIndex++;
-                }
-            }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-        return false;
-    }
 
 }

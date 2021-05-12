@@ -12,14 +12,14 @@ public class Population {
     int fittest = 0;
 
     //Initialize population
-    public void initializePopulation(int size, String player) {
+    public void initializePopulation(int size, String player, String outputFilePath) {
         if(player.equals("WHITE")){
             for (int i = 0; i < individuals.length; i++) {
-                individuals[i] = new WhiteIndividual();
+                individuals[i] = new WhiteIndividual(outputFilePath);
             }
         } else{ //PLAYER BLACK
             for (int i = 0; i < individuals.length; i++) {
-                individuals[i] = new BlackIndividual();
+                individuals[i] = new BlackIndividual(outputFilePath);
             }
         }
     }
