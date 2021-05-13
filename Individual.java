@@ -3,6 +3,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.Random;
+import java.util.Arrays;
 
 
 public abstract class Individual{
@@ -26,17 +27,22 @@ public abstract class Individual{
         //System.out.println("ENTRO isUnique");
         int weightIndex = 0;
         double currentReadWeight;
+        double[] currentRowWeights = new double[8];
         String data = "";
         try (var br = new BufferedReader(new FileReader(historyFilePath + id))) {
             while ((data = br.readLine()) != null) {
                 weightIndex = 0;
                 var st = new StringTokenizer(data, ";");
+                //insert the weights found in the line into the double[] array
                 while (st.hasMoreTokens()){
                     currentReadWeight = Double.parseDouble(st.nextToken().trim());
-                    if(currentReadWeight != genes[weightIndex]){
-                        return true;
-                    }
+                    currentRowWeights[weightIndex] = currentReadWeight;
                     weightIndex++;
+                }
+                //if the double array built from the file row is equal to the current weights double array
+                //return false
+                if(Arrays.equals(genes, currentRowWeights)){
+                    return false;
                 }
             }
         } catch (IOException e) {
@@ -44,7 +50,8 @@ public abstract class Individual{
             e.printStackTrace();
             System.exit(1);
         }
-        return false;
+        //if genes array is never equal to one of the array wrote in the history file, return true (is unique)
+        return true;
     }
     //Calculate fitness
     public void calcFitness() {
@@ -70,9 +77,12 @@ public abstract class Individual{
 
         System.out.println("RISULTATO PARTITA: " + matchResult);
 
+        if(matchResult.equals("DRAW")){
+            fitness = 2;
+        }
 
         if(matchResult.equals("WIN")){
-            fitness = 2;
+            fitness = 4;
         }
 
         if(firstComputation){
@@ -80,6 +90,10 @@ public abstract class Individual{
         }
 
         if(matchResult.equals("WIN") && !firstComputation && numeroMosseAttuali < numeroMosseIniziali){
+            fitness = 5;
+        }
+
+        if(matchResult.equals("DRAW") && !firstComputation && numeroMosseAttuali > numeroMosseIniziali){
             fitness = 3;
         }
 
