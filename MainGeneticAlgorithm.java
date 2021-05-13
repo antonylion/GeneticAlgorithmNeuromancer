@@ -10,6 +10,7 @@ public class MainGeneticAlgorithm{
     //TODO: understand what is our fitness goal; could be win at least 8 games on 10 versus FrittoMisto_Agent
     static int fitnessGoal = 1;
     static String outputFilePath = "/tmp/NeuroWeights.txt";
+    static String improvementOutputFilePath = "/tmp/ImprovementWeights.txt";
 
     Population population = new Population();
     static Individual fittest;
@@ -47,53 +48,65 @@ public class MainGeneticAlgorithm{
         File gameStartFile = new File(gameStartFileName);
         File geneticStartFile = new File(geneticStartFileName);
 
-        //While population gets an individual with maximum fitness
-        while (demo.population.fittest < fitnessGoal) {
-            System.out.println("Waiting for " + geneticStartFileName);
-            // Wait for geneticStartFile to be created by GameTablut
-            while (!geneticStartFile.exists()) {
+        while(true){
+            //While population gets an individual with maximum fitness
+            while (demo.population.fittest < fitnessGoal) {
+                System.out.println("Waiting for " + geneticStartFileName);
+                // Wait for geneticStartFile to be created by GameTablut
+                while (!geneticStartFile.exists()) {
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        System.exit(1);
+                    }
+                }
+                // Delete geneticStartFile; it will be recreated by GameTablut
+                geneticStartFile.delete();
+                System.out.println("Deleted geneticStartFile " + geneticStartFileName);
+                ++demo.generationCount;
+
+                //DUMMY WAY TO TRY ONE INDIVIDUAL AT TIME, RANDOMLY (WITH NO EVOLUTION)
+                //demo.population.inidividualRetry();
+
+                //Evolving with first strategy
+                demo.population.retryWithFirstStrategy();
+
+                //Calculate new fitness value
+                demo.population.calculateFitness();
+
+                //System.out.println("Generation: " + demo.generationCount + " Fittest: " + demo.population.fittest);
+                System.out.println("Generation: " + demo.generationCount + " Fittest: " + demo.population.individuals[0].getMaxFitness());
+                // Let GameTablut run
                 try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e) {
+                    if (!gameStartFile.createNewFile()) {
+                        System.err.println(gameStartFileName + " already exists. Timing violation. Exiting...");
+                        throw new IOException();
+                    }
+                } catch (IOException e) {
                     e.printStackTrace();
                     System.exit(1);
                 }
             }
-            // Delete geneticStartFile; it will be recreated by GameTablut
-            geneticStartFile.delete();
-            System.out.println("Deleted geneticStartFile " + geneticStartFileName);
-            ++demo.generationCount;
 
-            //DUMMY WAY TO TRY ONE INDIVIDUAL AT TIME, RANDOMLY (WITH NO EVOLUTION)
-            //demo.population.inidividualRetry();
-
-            //Evolving with first strategy
-            demo.population.retryWithFirstStrategy();
-
-            //Calculate new fitness value
-            demo.population.calculateFitness();
-
-            System.out.println("Generation: " + demo.generationCount + " Fittest: " + demo.population.fittest);
-            // Let GameTablut run
-            try {
-                if (!gameStartFile.createNewFile()) {
-                    System.err.println(gameStartFileName + " already exists. Timing violation. Exiting...");
-                    throw new IOException();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.exit(1);
+            System.out.println("\nSolution found in generation " + demo.generationCount);
+            System.out.println("Fitness: "+demo.population.getFittest().fitness);
+            System.out.print("Genes: ");
+            for (int i = 0; i < demo.population.individuals[0].genes.length; i++) {
+                System.out.print(demo.population.getFittest().genes[i] + ";");
             }
-        }
+            System.out.println("");
 
-        System.out.println("\nSolution found in generation " + demo.generationCount);
-        System.out.println("Fitness: "+demo.population.getFittest().fitness);
-        System.out.print("Genes: ");
-        for (int i = 0; i < demo.population.individuals[0].genes.length; i++) {
-            System.out.print(demo.population.getFittest().genes[i] + ";");
-        }
+            //write this improvement to improvementOutputFilePath and pass to compute next weights
+            demo.population.markImprovement(improvementOutputFilePath, demo.population.getFittest().genes);
 
-        System.out.println("");
+            //restart evolution
+            fittest = demo.population.getFittest();
+            demo.population.fittest = demo.population.individuals[0].getMaxFitness();
+            demo.population.fittest--;
+            fitnessGoal = demo.population.fittest + 1;
+            demo.population.individuals[0].decMaxFitness();
+        }
 
     }
 

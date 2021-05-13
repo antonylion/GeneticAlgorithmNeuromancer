@@ -7,6 +7,8 @@ import java.util.Arrays;
 
 
 public abstract class Individual{
+
+    static int maxFitness = 0;
     int fitness = 0;
     double[] genes = new double[8];
 
@@ -59,7 +61,8 @@ public abstract class Individual{
         String data = "";
         fitness = 0;
 
-        try (var br = new BufferedReader(new FileReader(gameOutputFilePath + id))) {
+        //try (var br = new BufferedReader(new FileReader(gameOutputFilePath + id))) {
+        try (var br = new BufferedReader(new FileReader(gameOutputFilePath))) {
             while ((data = br.readLine()) != null) {
                 var st = new StringTokenizer(data, ";");
                 System.out.println("LETTA RIGA: " + data);
@@ -101,9 +104,24 @@ public abstract class Individual{
             fitness = 1;
         }
 
+        if (fitness > maxFitness){
+            maxFitness = fitness;
+        }
+
         firstComputation = false;
     }
 
     public abstract void retryFirtStrategy();
 
+    public abstract void markImprovement(String improvementOutputFilePath, double[] genes);
+
+    public abstract void setInitialGenes(double[] initialGenes);
+
+    public static int getMaxFitness() {
+        return maxFitness;
+    }
+
+    public static void decMaxFitness(){
+        maxFitness--;
+    }
 }

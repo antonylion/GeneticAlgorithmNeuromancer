@@ -1,10 +1,9 @@
+import java.io.*;
 import java.util.Random;
 import java.util.StringTokenizer;
-import java.io.File;
-import java.io.FileWriter;   // Import the FileWriter class
-import java.io.IOException;  // Import the IOException class to handle errors
 
 public class BlackIndividual extends Individual{
+
     double[] initialGenes = {-5000, 600, 450, -200, 100, 170, -100, 50};
 
     //Weights indexes
@@ -128,10 +127,38 @@ public class BlackIndividual extends Individual{
         }
     }
 
+    public void markImprovement(String improvementOutputFilePath, double[] genes){
+        String lastMatchResultAndMoves = "";
+        try (var br = new BufferedReader(new FileReader(gameOutputFilePath))){
+            lastMatchResultAndMoves = br.readLine();
+            var myWriter = new FileWriter(improvementOutputFilePath, true);
+            myWriter.write("BLACK IMPROVEMENT. RESULT: " + lastMatchResultAndMoves + ". WEIGHTS USED: ");
+            for(double peso : genes){
+                myWriter.write(peso + ";");
+            }
+            myWriter.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        //After having saved the improvement, start computing the next weight in the set
+        //For example, while computing the 3rd weight the algorithm found and improvement in the fitness function
+        //Computing the 3rd weight means that  30 <= numberOfGeneration <= 44;
+        //We now want numberOfGeneration to skip from its actual value to 45 in order to compute the 4th weight:
+        numberOfGeneration = ((numberOfGeneration / NUMBER_GENERATION_PER_INDEX) + 1) * NUMBER_GENERATION_PER_INDEX;
+
+        //so restart computation with evolved weights
+        setInitialGenes(genes);
+    }
+
     public void retrySecondStrategy(){
 
     }
 
-   
+    public void setInitialGenes(double[] initialGenes) {
+        this.initialGenes = initialGenes;
+    }
 
 }
